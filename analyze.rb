@@ -1,6 +1,5 @@
 require "exifr/jpeg"
 require "ascii_charts"
-IMG_DIR_PATH="/home/kisui/Pictures/sample/"
 def drawHistogram(img_dir_path)
   imgs_path=Array.new
   imgs_exif=Array.new
@@ -24,4 +23,23 @@ def drawHistogram(img_dir_path)
   end
   puts AsciiCharts::Cartesian.new(imgs_chart_args,:bar => true, :hide_zero => true).draw
 end
-drawHistogram(IMG_DIR_PATH)
+def pathValidation
+  loop do
+    puts "焦点距離を調査したい写真が存在するディレクトリの絶対パスを入力してください。"
+    print '--->'
+    inputPath = STDIN.gets.chomp
+    if !(%r|\A/([^\\:*<>?"\|/]+/)*[^\\:*<>?"\|/]*\Z| =~ inputPath)
+      puts 'パスが不正です'
+      next
+    elsif !(Dir.exist?(inputPath))
+      puts 'ディレクトリが存在しません'
+      next
+    elsif !(File.ftype(inputPath) == 'directory')
+      puts 'ディレクトリではありません'
+      next
+    end
+    return inputPath[-1] == '/' ? inputPath : inputPath << '/'
+    break
+  end
+end
+drawHistogram(pathValidation)
