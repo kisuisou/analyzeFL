@@ -6,7 +6,7 @@ def drawHistogram(img_dir_path)
   imgs_chart_args=Array.new
   Dir.foreach(img_dir_path) do |path|
     path=img_dir_path+path
-    next if File.extname(path)!=".jpg"
+    next if (/\.jpg|\.jpeg|\.png/i=~File.extname(path))==nil||File.extname(path)==""
     imgs_path.push(path)
     exif_data=EXIFR::JPEG.new(path)
     imgs_exif.push(exif_data)
@@ -28,7 +28,7 @@ def pathValidation
     puts "焦点距離を調査したい写真が存在するディレクトリの絶対パスを入力してください。"
     print '--->'
     inputPath = STDIN.gets.chomp
-    if !(%r|\A/([^\\:*<>?"\|/]+/)*[^\\:*<>?"\|/]*\Z| =~ inputPath)
+    if (%r|\A/([^\\:*<>?"\|/]+/)*[^\\:*<>?"\|/]*\Z| =~ inputPath)==nil
       puts 'パスが不正です'
       next
     elsif !(Dir.exist?(inputPath))
